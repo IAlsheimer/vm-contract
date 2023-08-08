@@ -36,13 +36,13 @@ entity DOKUMENT {
 }
 
 relationship OneToMany {
-	VERTRAG to @OnDelete("SET NULL") @OnUpdate("CASCADE") LEISTUNGSPFLICHT
-	VERTRAG to @OnDelete("SET NULL") @OnUpdate("CASCADE") FRIST
+	VERTRAG to LEISTUNGSPFLICHT
+	VERTRAG to FRIST
 	VERTRAG to DOKUMENT
 }
 
 relationship OneToOne {
-	LEISTUNGSPFLICHT to @OnDelete("SET NULL") @OnUpdate("CASCADE") FRIST 
+	LEISTUNGSPFLICHT to FRIST 
 }
 
 relationship ManyToOne {
