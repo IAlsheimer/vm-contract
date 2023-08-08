@@ -1,0 +1,102 @@
+@filter
+@paginate(infinite-scroll)
+entity VERTRAG {
+    vertragNr Integer unique,
+    vertragDatum LocalDate,
+    vertragArt VERTRAGART required,
+    vertragStatus VERTRAGSTATUS required,
+    kontrahent UUID required,
+    warnhinweis WARNHINWEIS,
+    url String, 
+    primaerDokument DOKUMENT required,
+    primaerDokumentHash String
+}
+
+entity LEISTUNGSPFLICHT {
+    id Integer unique,
+    vertragNr Integer required,
+    pflichtArt PFLICHTENART required,
+    schuldner UUID required,
+    glaeubiger UUID required,
+    warnhinweis WARNHINWEIS,
+}
+
+entity FRIST {
+    leistungspflicht Integer required,
+    fristEnde LocalDate required,
+    fristStart FRISTART required,
+    warnhinweis WARNHINWEIS
+}
+
+entity DOKUMENT {
+    vertragNr Integer required,
+    dokumentFormat DOKUMENTFORMAT required,
+    dokumentName String required,
+    dokumentHash String unique required,
+    url String required,
+    warnhinweis WARNHINWEIS
+}
+
+relationship OneToMany {
+	VERTRAG to @OnDelete("SET NULL") @OnUpdate("CASCADE") LEISTUNGSPFLICHT
+}
+relationship OneToMany {
+    VERTRAG to @OnDelete("SET NULL") @OnUpdate("CASCADE") FRIST
+}
+relationship OneToMany {
+    VERTRAG to DOKUMENT
+}
+
+
+relationship OneToOne {
+	LEISTUNGSPFLICHT to @OnDelete("SET NULL") @OnUpdate("CASCADE") FRIST 
+}
+
+relationship ManyToOne {
+    LEISTUNGSPFLICHT to DOKUMENT 
+}
+
+enum VERTRAGANLAGE {
+    COMPLIANCE, DATENSCHUTZ, PREISLISTE, LEISTUNGSAENDERUNG, 
+    VERTRAGSANPASSUNG, ZUSATZVEREINBARUNG, EINBEZIEHUNG,
+    SONSTIGE
+}
+
+enum WARNHINWEIS {
+    KRITISCH, WARNUNG, HINWEIS, KEINER
+}
+
+enum PARTEI {
+    GLAEUBIGER, SCHULDNER, BEIDE
+}
+
+enum FRISTART {
+    AUFBEWAHRUNG, LOESCHUNG, ABNAHME, ANNAHME, ERFUELLUNG, ZAHLUNG, SKONTO, PREISBINDUNG,
+    ANGEBOTSBINDUNG, PRUEFUNGSRECHT, VERJAEHRUNG, KUENDIGUNG, SONSTIGE
+}
+
+enum VERTRAGART {
+    RAHMENVERTRAG, KAUFVERTRAG, WERKVERTRAG, DIENSTLEISTUNGSVERTRAG, MIETVERTRAG, LEASINGVERTRAG, 
+    PACHTVERTRAG, ARBEITSVERTRAG, SONSTIGER_VERTRAG
+}
+
+enum DATENSCHUTZ {
+    AVV, TOM, DSB
+}
+
+enum HAFTUNGSART {
+    VERTRAGSHAFTUNG, DELIKTSHAFTUNG, GARANTIE, GEWAEHRLEISTUNG, PRODUKTHAFTUNG, 
+    MAENGELHAFTUNG, SONSTIGE
+}
+
+enum VERTRAGSTATUS {
+    LAUFEND, BEENDIGT, GEKUENDIGT
+}
+
+enum PFLICHTENART {
+    HAUPTLEISTUNGSPFLICHT, NEBENLEISTUNGSPFLICHT
+}
+
+enum DOKUMENTFORMAT {
+    DOC, DOCX, PDF, XLS, XLSX, PPT, PPTX, TXT, JPG, PNG, GIF, TIFF, BMP, ZIP, RAR
+}
