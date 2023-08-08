@@ -39,7 +39,7 @@
     "skipClient": false,
     "skipFakeData": false,
     "skipUserManagement": true,
-    "testFrameworks": ["cucumber"],
+    "testFrameworks": [],
     "useSass": true,
     "websocket": false,
     "withAdminUi": true

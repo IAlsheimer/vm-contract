@@ -13,7 +13,6 @@ entity Vertrag {
 @readOnly
 @service(serviceImpl)
 entity Contact {
-	name String
 	crmId UUID
 }
 
@@ -40,8 +39,7 @@ entity Dokument {
 }
 
 relationship OneToMany {
-	Vertrag to Frist{vertrag}
-	Vertrag to Dokument{vertrag}	
+	Vertrag to Frist{vertrag}	
 }
 
 relationship OneToOne {
@@ -50,9 +48,9 @@ relationship OneToOne {
 
 relationship ManyToOne {
     Leistungspflicht{dokument} to Dokument
-    Dokument to Vertrag{dokumente}
+    Dokument{vertrag} to Vertrag{dokument}
     Vertrag{auftraggeber} to Contact
-	Vertrag{auftragnehmer} to Contact 
+	Vertrag{auftragnehmer} to Contact
 }
 
 enum DOKUMENTART {
