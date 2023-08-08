@@ -1,52 +1,45 @@
 @filter
 @paginate(infinite-scroll)
 entity VERTRAG {
-    vertragNr Integer unique,
-    vertragDatum LocalDate,
-    vertragArt VERTRAGART required,
-    vertragStatus VERTRAGSTATUS required,
-    kontrahent UUID required,
-    warnhinweis WARNHINWEIS,
-    url String, 
-    primaerDokument DOKUMENT required,
-    primaerDokumentHash String
+    vertragNr Integer unique
+    vertragDatum LocalDate
+    vertragArt VERTRAGART required
+    vertragStatus VERTRAGSTATUS required
+    kontrahent UUID required
+    warnhinweis WARNHINWEIS
+    url String
 }
 
 entity LEISTUNGSPFLICHT {
-    id Integer unique,
-    vertragNr Integer required,
-    pflichtArt PFLICHTENART required,
-    schuldner UUID required,
-    glaeubiger UUID required,
-    warnhinweis WARNHINWEIS,
+    id Integer unique
+    vertragNr Integer required
+    pflichtArt PFLICHTENART required
+    schuldner UUID required
+    glaeubiger UUID required
+    warnhinweis WARNHINWEIS
 }
 
 entity FRIST {
-    leistungspflicht Integer required,
-    fristEnde LocalDate required,
-    fristStart FRISTART required,
+    leistungspflicht Integer required
+    fristEnde LocalDate required
+    fristStart FRISTART required
     warnhinweis WARNHINWEIS
 }
 
 entity DOKUMENT {
-    vertragNr Integer required,
-    dokumentFormat DOKUMENTFORMAT required,
-    dokumentName String required,
-    dokumentHash String unique required,
-    url String required,
+    vertragNr Integer required
+    dokumentFormat DOKUMENTFORMAT required
+    dokumentName String required
+    dokumentHash String unique required
+    url String required
     warnhinweis WARNHINWEIS
 }
 
 relationship OneToMany {
 	VERTRAG to @OnDelete("SET NULL") @OnUpdate("CASCADE") LEISTUNGSPFLICHT
+	VERTRAG to @OnDelete("SET NULL") @OnUpdate("CASCADE") FRIST
+	VERTRAG to DOKUMENT
 }
-relationship OneToMany {
-    VERTRAG to @OnDelete("SET NULL") @OnUpdate("CASCADE") FRIST
-}
-relationship OneToMany {
-    VERTRAG to DOKUMENT
-}
-
 
 relationship OneToOne {
 	LEISTUNGSPFLICHT to @OnDelete("SET NULL") @OnUpdate("CASCADE") FRIST 
