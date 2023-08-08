@@ -1,0 +1,5 @@
+org.springframework.test.context.ContextCustomizerFactory = biz.alsheimer.\
+    vmcontract.config.TestContainersSpringContextCustomizerFactory,biz.\
+    alsheimer.vmcontract.config.\
+    SqlTestContainersSpringContextCustomizerFactory,biz.alsheimer.vmcontract.\
+    config.KafkaTestContainersSpringContextCustomizerFactory
