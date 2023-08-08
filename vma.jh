@@ -1,76 +1,111 @@
 @filter
 @paginate(infinite-scroll)
-entity VERTRAG {
-    vertragNr Integer unique
+@search(elasticsearch)
+entity Vertrag {
     vertragDatum LocalDate
     vertragArt VERTRAGART required
     vertragStatus VERTRAGSTATUS required
-    kontrahent UUID required
     warnhinweis WARNHINWEIS
     url String
 }
 
-entity LEISTUNGSPFLICHT {
-    id Integer unique
-    vertragNr Integer required
+@skipClient
+@readOnly
+@service(serviceImpl)
+entity Contact {
+	name String
+	crmId UUID
+}
+
+entity Leistungspflicht {
     pflichtArt PFLICHTENART required
-    schuldner UUID required
-    glaeubiger UUID required
     warnhinweis WARNHINWEIS
 }
 
-entity FRIST {
-    leistungspflicht Integer required
+@search(elasticsearch)
+entity Frist {
     fristEnde LocalDate required
     fristStart FRISTART required
     warnhinweis WARNHINWEIS
 }
 
-entity DOKUMENT {
-    vertragNr Integer required
+@search(elasticsearch)
+entity Dokument {
     dokumentFormat DOKUMENTFORMAT required
     dokumentName String required
     dokumentHash String unique required
+    dokumentArt DOKUMENTART required
     url String required
     warnhinweis WARNHINWEIS
 }
 
 relationship OneToMany {
-	VERTRAG to LEISTUNGSPFLICHT
-	VERTRAG to FRIST
-	VERTRAG to DOKUMENT
+	Vertrag to Frist{vertrag}
+	Vertrag to Dokument{vertrag}	
 }
 
 relationship OneToOne {
-	LEISTUNGSPFLICHT to FRIST 
+	Leistungspflicht{frist} to Frist
 }
 
 relationship ManyToOne {
-    LEISTUNGSPFLICHT to DOKUMENT 
+    Leistungspflicht{dokument} to Dokument
+    Dokument to Vertrag{dokumente}
+    Vertrag{auftraggeber} to Contact
+	Vertrag{auftragnehmer} to Contact 
 }
 
-enum VERTRAGANLAGE {
-    COMPLIANCE, DATENSCHUTZ, PREISLISTE, LEISTUNGSAENDERUNG, 
-    VERTRAGSANPASSUNG, ZUSATZVEREINBARUNG, EINBEZIEHUNG,
-    SONSTIGE
+enum DOKUMENTART {
+	HAUPTDOKUMENT(HAUPTDOKUMENT),
+    COMPLIANCE(Compliance),
+    DATENSCHUTZ(Datenschutz),
+    PREISLISTE(Preisliste),
+    LEISTUNGSAENDERUNG(Leistungsaenderung), 
+    VERTRAGSANPASSUNG(Vertragsanpassung),
+    ZUSATZVEREINBARUNG(Zusatzvereinbarung),
+    ERGAENZUNG(Ergaenzung)
+    SONSTIGE(Sontige)
 }
 
 enum WARNHINWEIS {
-    KRITISCH, WARNUNG, HINWEIS, KEINER
+    KEINER(Keiner),
+    KRITISCH(Kritisch),
+    WARNUNG(Warnung),
+    HINWEIS(Hinweis)    
 }
 
 enum PARTEI {
-    GLAEUBIGER, SCHULDNER, BEIDE
+    GLAEUBIGER(Glaeubiger),
+    SCHULDNER(Schuldner),
+    UNBEKANNT(Unbekannt)
 }
 
 enum FRISTART {
-    AUFBEWAHRUNG, LOESCHUNG, ABNAHME, ANNAHME, ERFUELLUNG, ZAHLUNG, SKONTO, PREISBINDUNG,
-    ANGEBOTSBINDUNG, PRUEFUNGSRECHT, VERJAEHRUNG, KUENDIGUNG, SONSTIGE
+    AUFBEWAHRUNG(Aufbewahrung),
+    LOESCHUNG(Loeschung), 
+    ABNAHME(Abnahme), 
+    ANNAHME(Annahme), 
+    ERFUELLUNG(Erfuellung), 
+    ZAHLUNG(Zahlung), 
+    SKONTO(Skonto), 
+    PREISBINDUNG(Preisbindung),
+    ANGEBOTSBINDUNG(Angebotsbindung), 
+    PRUEFUNGSRECHT(Pruefungsrecht), 
+    VERJAEHRUNG(Verjaehrung), 
+    KUENDIGUNG(Kuendigung), 
+    SONSTIGE(Sonstige)
 }
 
 enum VERTRAGART {
-    RAHMENVERTRAG, KAUFVERTRAG, WERKVERTRAG, DIENSTLEISTUNGSVERTRAG, MIETVERTRAG, LEASINGVERTRAG, 
-    PACHTVERTRAG, ARBEITSVERTRAG, SONSTIGER_VERTRAG
+    RAHMENVERTRAG(Rahmenvertrag), 
+    KAUFVERTRAG(Kaufvertrag), 
+    WERKVERTRAG(Werkvertrag), 
+    DIENSTLEISTUNGSVERTRAG(Dienstleistungsvertrag), 
+    MIETVERTRAG(Mietvertrag), 
+    LEASINGVERTRAG(Leasingvertrag), 
+    PACHTVERTRAG(Pachtvertrag), 
+    ARBEITSVERTRAG(Arbeitsvertrag), 
+    SONSTIGE(Sonstige)
 }
 
 enum DATENSCHUTZ {
@@ -78,16 +113,17 @@ enum DATENSCHUTZ {
 }
 
 enum HAFTUNGSART {
-    VERTRAGSHAFTUNG, DELIKTSHAFTUNG, GARANTIE, GEWAEHRLEISTUNG, PRODUKTHAFTUNG, 
-    MAENGELHAFTUNG, SONSTIGE
+    VERTRAGSHAFTUNG(Vertragshaftung), DELIKTSHAFTUNG(Deliktshaftung), GARANTIE(Garantie),
+    GEWAEHRLEISTUNG(Gewaehrleistung), PRODUKTHAFTUNG(Produkthaftung), 
+    MAENGELHAFTUNG(Maengelhaftung), SONSTIGE(Sonstige)
 }
 
 enum VERTRAGSTATUS {
-    LAUFEND, BEENDIGT, GEKUENDIGT
+    LAUFEND(Laufend), BEENDIGT(Beendigt), GEKUENDIGT(Gekuendigt)
 }
 
 enum PFLICHTENART {
-    HAUPTLEISTUNGSPFLICHT, NEBENLEISTUNGSPFLICHT
+    HAUPTLEISTUNGSPFLICHT(Hauptleistungspflicht), NEBENLEISTUNGSPFLICHT(Nebenleistungspflicht)
 }
 
 enum DOKUMENTFORMAT {
